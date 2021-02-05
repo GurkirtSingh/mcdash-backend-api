@@ -12,6 +12,7 @@ class Store(models.Model):
 # Staff - Model
 class Staff(models.Model):
     store = models.ForeignKey(Store, on_delete=CASCADE)
+    is_admin = models.BooleanField(default=False)
     position = models.CharField(max_length=100)
 
 # SHIFT_DETAIL - Model
