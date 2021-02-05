@@ -24,7 +24,6 @@ class Shift_Detail(models.Model):
 # Employee - Model
 class Employee(models.Model):
     user = models.ForeignKey(User, on_delete=models.CASCADE)
-    store = models.ForeignKey(Store, on_delete=models.CASCADE)
     staff = models.ForeignKey(Staff, on_delete=CASCADE)
 
 # Shift - model
