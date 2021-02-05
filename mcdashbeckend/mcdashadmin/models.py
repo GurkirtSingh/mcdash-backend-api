@@ -6,7 +6,7 @@ from django.db.models.fields import DateTimeField
 
 # STORE - Model
 class Store(models.Model):
-    store_number = models.CharField(max_length=100) # store id or uniqly identified number
+    store_number = models.CharField(max_length=100, unique=True) # store id or uniqly identified number
     name = models.CharField(max_length=100)
 
 # Staff - Model
