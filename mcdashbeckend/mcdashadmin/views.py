@@ -55,7 +55,7 @@ def admin_and_store_register(req):
                     context = {
                         'store_name' : store_form.cleaned_data['name'],
                     }
-                    return render(req, 'mcdashadmin/Thankyou.html', context)
+                    return redirect('admin_home')
                 else:
                     return render(req, 'mcdashadmin/ServerError.html')
             else:
