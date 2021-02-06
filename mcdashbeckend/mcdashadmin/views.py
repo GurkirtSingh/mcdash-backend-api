@@ -101,7 +101,7 @@ def admin_login(req):
             # Return an 'invalid login' error message.
             return render(req, 'mcdashadmin/splash.html', context=context)
     else:
-        redirect(req,'url')
+        return redirect('admin_and_store_register')
 
 # home page
 @login_required(login_url='login')
