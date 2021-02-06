@@ -1,0 +1,52 @@
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title>Welcome to McDash Admin</title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" href="">
+    </head>
+    <body>
+        <div>
+            <h1>Hello, Welcome to McDash Admin Page</h1>
+            <h2>Start by creating new store</h2>
+            <div style="border: 1px solid black;">
+                <form action="/" method="POST">
+                    <h2>Store Info</h2>
+                    {% csrf_token %}
+                    {{ store_form.as_ul }}
+                    <h2>Admin Info</h2>
+                    {{ employee_form.as_ul }}
+                    <h2>Staff info</h2>
+                    <ul>
+                        <li>
+                            <label for="staff_position">Position</label>
+                            <input id="staff_position" name="staff_position"/>
+                        </li>
+                    </ul>
+                    <input type="submit" value="Create store"/>
+                </form>
+            </div>
+            <h2 style="color:burlywood">Or</h2>
+            <h2>Login if already have a store</h2>
+            {% if loginError %}
+                <span style="color: brown;">{{ loginError }}</span>
+            {% endif %}
+            <form action="{% url 'admin_login' %}" method="POST">
+                {% csrf_token %}
+                <label for="username">Username</label>
+                <input id="username" name="username"/>
+                <label for="password">Password</label>
+                <input id="password" name="password"/>
+                <input type="submit" value="login"/>
+            </form>
+        </div>        
+        <script src="" async defer></script>
+    </body>
+</html>
