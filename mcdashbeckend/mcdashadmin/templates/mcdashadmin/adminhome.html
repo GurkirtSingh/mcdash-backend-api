@@ -1,1 +1,78 @@
-User are logged as admin
+{% load static %}
+<!DOCTYPE html>
+<!--[if lt IE 7]>      <html class="no-js lt-ie9 lt-ie8 lt-ie7"> <![endif]-->
+<!--[if IE 7]>         <html class="no-js lt-ie9 lt-ie8"> <![endif]-->
+<!--[if IE 8]>         <html class="no-js lt-ie9"> <![endif]-->
+<!--[if gt IE 8]>      <html class="no-js"> <!--<![endif]-->
+<html>
+    <head>
+        <meta charset="utf-8">
+        <meta http-equiv="X-UA-Compatible" content="IE=edge">
+        <title></title>
+        <meta name="description" content="">
+        <meta name="viewport" content="width=device-width, initial-scale=1">
+        <link rel="stylesheet" type="text/css" href="{% static 'mcdashadmin/style/change_shift_model.css'%}">
+    </head>
+    <body>
+        <h1>Mcdash Admin</h1>
+        <a href="{% url 'admin_logout' %}">Logout</a>
+        <h2>Upload Schedule</h2>
+        {% if success %}
+            <span style="color: chartreuse;">{{ success }}</span>
+        {% endif %}
+        <form action="{% url 'admin_home' %}" method="POST" enctype="multipart/form-data">
+            {% csrf_token %}
+            {% if error %}
+                <span style="color: brown;">{{ error }}</span>
+            {% endif %}
+            <div>
+                <label for="sche-pdf">Schedule File</label>
+                <input type="file" name="sche-pdf"/>
+            </div>
+            <input type="submit" value="Upload"/>
+        </form>
+        <h2>Add Shift</h2>
+        <button>Add Shift</button>
+        <hr/>
+        <h2>View Schedule</h2>
+        <table style="width: 100%;" >
+            <tr>
+                <th>Employee</th>
+                <th>Start At</th>
+                <th>End At</th>
+                <th>Station</th>
+                <th>Location</th>
+                <th>action</th>
+            </tr>
+            {% for username, shift, id in shifts %}
+                <tr>
+                    <td>{{username}}</td>
+                    <td>{{shift.start_at}}</td>
+                    <td>{{shift.end_at}}</td>
+                    <td>{{shift.station}}</td>
+                    <td>{{shift.store.name }}</td>
+                    <td>
+                        <button class="model-btn" id="{{id.username}}">Edit</button>
+                    </td>
+                </tr>
+            {% endfor %}   
+        </table>
+        <hr/>
+        <div class="modal-bg">
+            <div class="model">
+                <h2>Edit Shift</h2>
+                <label for="start_at">Start At</label>
+                <input type="datetime-local" name="start_at" id="start_at"/>
+                <label for="end_at">End At</label>
+                <input type="datetime-local" name="end_at" id="end_at"/>
+                <label for="station">Staion</label>
+                <input type="text" maxlength="100" name="station" id="station"/>
+                <label for="store_name">Site</label>
+                <input type="text" maxlength="100" name="store_name" id="store_name"/>
+                <button>Change Shift</button>
+                <span class="modal-close">X</span>
+            </div>
+        </div>
+        <script src="{% static 'mcdashadmin/scripts/edit_shift.js'%}" async defer></script>
+    </body>
+</html>
