@@ -1,8 +1,15 @@
+from django.http import JsonResponse
+from django.http.response import HttpResponse, HttpResponseBadRequest, HttpResponseNotAllowed
 from django.shortcuts import render, redirect
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.decorators import login_required
-from .forms import StoreForm, UserForm
-from .models import Staff, Employee
+from .forms import StoreForm, UserForm, assign_new_shift
+from .models import Shift, Shift_Detail, Staff, Employee
+from .services import scan_schedule_from_pdf
+from .dal import get_all_usernames, get_shift_detail_by_date
+import datetime as dt
+import json
+from rest_framework.response import Response
 
 # Create your views here.
 def admin_and_store_register(req):
@@ -104,6 +111,44 @@ def admin_login(req):
         return redirect('admin_and_store_register')
 
 # home page
-@login_required(login_url='login')
+@login_required(login_url='admin_login')
 def admin_home(req):
-    return render(req, 'mcdashadmin/adminhome.html')
+    # check if the user is admin
+    employee = Employee.objects.get(user=req.user)
+    if not employee.staff.is_admin:
+        return HttpResponse(HttpResponseBadRequest)
+    context = {}
+    context['shifts'] = get_shift_detail_by_date(dt.date(2021, 1, 11))
+    if req.method == 'POST':
+        file = req.FILES['sche-pdf']
+        if file is not None:
+            if file.content_type == 'application/pdf': # 
+                # if the slected file is a valid 'pdf' format
+                # send it to scan schedule
+                scan_schedule_from_pdf(file)
+                context['success'] = 'Uploaded Successfuly!'
+            else:
+                context['error'] = 'Please select a pdf file!'
+        else:
+            context['error'] = 'Please select a file!'
+    return render(req, 'mcdashadmin/adminhome.html', context)
+
+# logout
+@login_required(login_url='admin_login')
+def admin_logout(req):
+    logout(request=req)
+    return redirect('admin_and_store_register')
+
+# assign new shift
+@login_required(login_url='admin_login')
+def assign_new_shift_view(req):
+    if req.method != 'POST':
+        return HttpResponse(HttpResponseNotAllowed)
+    data = {}
+    new_form = assign_new_shift(req.POST)
+    if new_form.is_valid():
+        new_form.save()
+        data['response'] = 'New Shift assigned succesfully!'
+    else:
+        data = new_form.errors
+    return JsonResponse(data)
