@@ -17,7 +17,7 @@
             <h1>Hello, Welcome to McDash Admin Page</h1>
             <h2>Start by creating new store</h2>
             <div style="border: 1px solid black;">
-                <form action="/" method="POST">
+                <form action="{% url 'admin_and_store_register' %}" method="POST">
                     <h2>Store Info</h2>
                     {% csrf_token %}
                     {{ store_form.as_ul }}
