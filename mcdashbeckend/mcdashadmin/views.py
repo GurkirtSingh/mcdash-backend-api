@@ -13,13 +13,16 @@ from rest_framework.response import Response
 
 # Create your views here.
 def admin_and_store_register(req):
+    context = {}
     if req.method == 'POST':
 
         # get forms data from post request
         # storeForm, employeeForm, staffForm
         store_form = StoreForm(req.POST, prefix='storeform')
         user_form = UserForm(req.POST, prefix='employeeform')
-        staff_position = req.POST['staff_position']
+        # currently staff position not getting from user
+        # assuming admin is a schedule manager
+        staff_position = "Schedule Manager"
 
         # validate forms data
         if store_form.is_valid() and user_form.is_valid():
@@ -36,7 +39,7 @@ def admin_and_store_register(req):
 
             # create staff by staffForm.position and linking with store
             # also make is admin to true
-            staff, created = Staff.objects.get_or_create(
+            staff, _ = Staff.objects.get_or_create(
                     position=staff_position,
                     store=store,
                     is_admin = True
@@ -45,42 +48,23 @@ def admin_and_store_register(req):
             # finally create emplyee
             # by linking user and store
             if staff is not None:
-                new_employee, created = Employee.objects.get_or_create(
+                new_employee, _ = Employee.objects.get_or_create(
                     user=user,
                     staff=staff
                 )
                 if new_employee is not None:
-                    # if employee regitered successfully
-                    # log on console
-                    # redirect to a Thank you page or home page
-
-                    # save all the models
-                    print('New store is registered.')
-                    print('Store Number: ' + store.store_number)
-                    print('Admin: ' + new_employee.user.username)
-                    print('------------------------')
-                    context = {
-                        'store_name' : store_form.cleaned_data['name'],
-                    }
                     return redirect('admin_home')
                 else:
-                    return render(req, 'mcdashadmin/ServerError.html')
+                    context['page_error'] = 'Unable to create employee'
             else:
-                return render(req, 'mcdashadmin/ServerError.html')
+                context['page_error'] = 'Unable to create staff position'
         else:
-            context = {
-                'store_form' : store_form,
-                'employee_form': user_form,
-            }
-            return render(req, 'mcdashadmin/splash.html', context)
+            context['store_form'] = store_form
+            context['employee_form'] = user_form
     else:
-        empty_store_form = StoreForm(prefix='storeform')
-        empty_employee_form = UserForm(prefix='employeeform')
-        content = {
-            'store_form': empty_store_form,
-            'employee_form': empty_employee_form,
-        }
-        return render(req, 'mcdashadmin/splash.html', context=content)
+        context['store_form'] = StoreForm(prefix='storeform')
+        context['employee_form'] = UserForm(prefix='employeeform')
+    return render(req, 'mcdashadmin/landingPage.html', context)    
 
 # login view
 def admin_login(req):
@@ -95,8 +79,7 @@ def admin_login(req):
                 if employee.staff.is_admin:
                     login(req, user)
                     # Redirect to a success page.
-                    return redirect('admin_home')
-        
+                    return redirect('admin_home')      
         else:
             empty_store_form = StoreForm(prefix='storeform')
             empty_employee_form = UserForm(prefix='employeeform')
@@ -106,7 +89,7 @@ def admin_login(req):
                 'loginError' : "Admin's username/password is invalid",
             }
             # Return an 'invalid login' error message.
-            return render(req, 'mcdashadmin/splash.html', context=context)
+            return render(req, 'mcdashadmin/landingPage.html', context=context)
     else:
         return redirect('admin_and_store_register')
 

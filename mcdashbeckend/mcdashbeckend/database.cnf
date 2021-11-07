@@ -1,0 +1,5 @@
+[client]
+database = mcdashdb
+user = mcdashadmin
+password = password123
+default-character-set = utf8

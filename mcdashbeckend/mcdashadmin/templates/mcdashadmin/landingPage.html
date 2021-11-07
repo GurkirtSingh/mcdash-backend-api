@@ -1,0 +1,70 @@
+{% extends 'mcdashadmin/Base.html' %}
+{% load widget_tweaks %}
+{% block content %}
+<div class="outer-container">
+    <div class="signup-container">
+        <div>
+            <span class="signup-title">Sign Up New Store</span>
+            <form id="signup-form" action="{% url 'admin_and_store_register' %}" method="POST">
+                {% csrf_token %}
+                <div class="store-info">
+                    <span>Store info</span>
+                    {% render_field store_form.store_number class="magic-input" placeholder="Store Id" %}
+                    {% render_field store_form.name class="magic-input" placeholder="Store Name" %}
+                </div>
+                <div class="admin-info">
+                    <span>Admin info</span>
+                    {% render_field employee_form.first_name class="magic-input" placeholder="First Name" %}
+                    {% render_field employee_form.last_name class="magic-input" placeholder="Last Name" %}
+                    {% render_field employee_form.email class="magic-input" placeholder="Email" %}
+                    {% render_field employee_form.username class="magic-input" placeholder="Username" %}
+                    {% render_field employee_form.password type="password" class="magic-input" placeholder="Password" %}
+                    <input type="submit" value="Signup" class="primary-btn">
+                </div>
+            </form>
+        </div>
+    </div>
+    <div class="vertical-line"></div>
+    <div class="login-container">
+        <div class="login-title">McDash Admin</div>
+        <form id="login-form" action="{% url 'admin_login' %}" method="POST">
+            {% csrf_token %}
+            <span class="login-error">{{ loginError }}</span>
+            <input type="text" placeholder="Username" name="username" id="username" class="magic-input">
+            <input type="password" placeholder="Password" name="password" id="password" class="magic-input">
+            <input type="submit" value="Login" class="primary-btn">
+        </form>
+    </div>
+</div>
+            <!-- <div style="border: 1px solid black;">
+                <form action="{% url 'admin_and_store_register' %}" method="POST">
+                    <h2>Store Info</h2>
+                    {% csrf_token %}
+                    {{ store_form.as_ul }}
+                    <h2>Admin Info</h2>
+                    {{ employee_form.as_ul }}
+                    <h2>Staff info</h2>
+                    <ul>
+                        <li>
+                            <label for="staff_position">Position</label>
+                            <input id="staff_position" name="staff_position"/>
+                        </li>
+                    </ul>
+                    <input type="submit" value="Create store"/>
+                </form>
+            </div>
+            <h2 style="color:burlywood">Or</h2>
+            <h2>Login if already have a store</h2>
+            {% if loginError %}
+                <span style="color: brown;">{{ loginError }}</span>
+            {% endif %}
+            <form action="{% url 'admin_login' %}" method="POST">
+                {% csrf_token %}
+                <label for="username">Username</label>
+                <input id="username" name="username"/>
+                <label for="password">Password</label>
+                <input id="password" name="password"/>
+                <input type="submit" value="login"/>
+            </form>
+        </div> -->
+{% endblock %}
